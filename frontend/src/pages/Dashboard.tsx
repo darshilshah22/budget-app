@@ -3,94 +3,50 @@ import {
   Plus,
   Settings,
   PiggyBank,
-  Wallet,
   ArrowUpRight,
-  DollarSign,
-  CreditCard,
-  TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Pie, PieChart, Cell } from "recharts";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
-
-const monthlyData = [
-  { name: 'Jan', income: 5000, expenses: 3500 },
-  { name: 'Feb', income: 5500, expenses: 3800 },
-  { name: 'Mar', income: 4800, expenses: 3200 },
-  { name: 'Apr', income: 6000, expenses: 4000 },
-  { name: 'May', income: 5200, expenses: 3600 },
-  { name: 'Jun', income: 5800, expenses: 3900 },
-];
-
-const categoryData = [
-  { name: 'Food', value: 35 },
-  { name: 'Transport', value: 25 },
-  { name: 'Entertainment', value: 20 },
-  { name: 'Shopping', value: 15 },
-  { name: 'Others', value: 5 },
-];
+import { 
+  monthlyData, 
+  categoryData, 
+  recentTransactions, 
+  summaryCards} from '../data/sample-data';
 
 const COLORS = ['#4ade80', '#f87171', '#fbbf24', '#60a5fa', '#a78bfa'];
 
-const recentTransactions = [
-  {
-    id: 1,
-    description: 'Grocery Shopping',
-    amount: 150.50,
-    category: 'Food',
-    date: '2024-03-15',
-    type: 'expense',
-  },
-  {
-    id: 2,
-    description: 'Salary',
-    amount: 5000.00,
-    category: 'Income',
-    date: '2024-03-14',
-    type: 'income',
-  },
-  {
-    id: 3,
-    description: 'Netflix Subscription',
-    amount: 15.99,
-    category: 'Entertainment',
-    date: '2024-03-13',
-    type: 'expense',
-  },
-];
-
-const summaryCards = [
-  {
-    title: "Total Balance",
-    value: "$24,500",
-    change: { value: 12.5, direction: "up" },
-    icon: Wallet,
-    color: "blue",
-  },
-  {
-    title: "Income",
-    value: "$8,200",
-    change: { value: 8.2, direction: "up" },
-    icon: TrendingUp,
-    color: "green",
-  },
-  {
-    title: "Expenses",
-    value: "$3,800",
-    change: { value: 5.7, direction: "down" },
-    icon: CreditCard,
-    color: "red",
-  },
-  {
-    title: "Savings",
-    value: "$4,400",
-    change: { value: 15.3, direction: "up" },
-    icon: PiggyBank,
-    color: "purple",
-  },
-];
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-gray-800 border border-gray-700/50 rounded-lg shadow-xl p-4 backdrop-blur-sm">
+        <div className="flex items-center gap-3 mb-2">
+          <div 
+            className="w-3 h-3 rounded-full" 
+            style={{ backgroundColor: payload[0].payload.fill }}
+          />
+          <span className="text-base font-medium text-white">
+            {data.name}
+          </span>
+        </div>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-sm text-gray-400">Percentage:</span>
+            <span className="text-sm font-medium text-white">{data.value}%</span>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-sm text-gray-400">Amount:</span>
+            <span className="text-sm font-medium text-white">${(data.value * 50).toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -145,7 +101,7 @@ export default function Dashboard() {
         <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {
             summaryCards.map((card) => (
-              <div className="bg-gray-800 px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
+              <div className="bg-gray-800 px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group" key={card.title}>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-gray-400 text-sm">{card.title}</h3>
                   <div className="p-2 rounded-full bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors duration-300">
@@ -215,13 +171,9 @@ export default function Dashboard() {
                       />
                     ))}
                   </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1F2937",
-                      border: "2px solid #374151",
-                      borderRadius: "0.5rem",
-                      color: "#fff",
-                    }}
+                  <Tooltip 
+                    content={<CustomTooltip />}
+                    wrapperStyle={{ outline: 'none' }}
                   />
                 </PieChart>
               </ResponsiveContainer>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Plus,
   Search,
@@ -10,89 +10,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { Card } from '../components/ui/card';
-
-const categories = [
-  {
-    id: 1,
-    name: 'Food & Dining',
-    type: 'expense',
-    color: 'blue',
-    transactions: 45,
-    total: 1200.50,
-    trend: '+8%',
-    trendDirection: 'up',
-  },
-  {
-    id: 2,
-    name: 'Transportation',
-    type: 'expense',
-    color: 'green',
-    transactions: 32,
-    total: 450.75,
-    trend: '-3%',
-    trendDirection: 'down',
-  },
-  {
-    id: 3,
-    name: 'Entertainment',
-    type: 'expense',
-    color: 'purple',
-    transactions: 28,
-    total: 350.25,
-    trend: '+12%',
-    trendDirection: 'up',
-  },
-  {
-    id: 4,
-    name: 'Shopping',
-    type: 'expense',
-    color: 'orange',
-    transactions: 56,
-    total: 850.00,
-    trend: '+5%',
-    trendDirection: 'up',
-  },
-  {
-    id: 5,
-    name: 'Utilities',
-    type: 'expense',
-    color: 'red',
-    transactions: 12,
-    total: 250.50,
-    trend: '-2%',
-    trendDirection: 'down',
-  },
-  {
-    id: 6,
-    name: 'Salary',
-    type: 'income',
-    color: 'green',
-    transactions: 4,
-    total: 5000.00,
-    trend: '+5%',
-    trendDirection: 'up',
-  },
-  {
-    id: 7,
-    name: 'Freelance',
-    type: 'income',
-    color: 'blue',
-    transactions: 8,
-    total: 1200.00,
-    trend: '+15%',
-    trendDirection: 'up',
-  },
-  {
-    id: 8,
-    name: 'Investments',
-    type: 'income',
-    color: 'purple',
-    transactions: 3,
-    total: 750.00,
-    trend: '+8%',
-    trendDirection: 'up',
-  },
-];
+import { categories } from '../data/sample-data';
 
 const colorMap = {
   blue: 'bg-blue-500/10 text-blue-500',

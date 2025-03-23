@@ -4,66 +4,8 @@ import { Card } from "../components/ui/card";
 import { Modal } from "../components/ui/modal";
 import { AddTransactionForm } from "../components/transactions/add-transaction-form";
 import { motion } from "framer-motion";
+import { Transaction, transactions } from "../data/sample-data";
 
-interface Transaction {
-  id: number;
-  description: string;
-  amount: number;
-  category: string;
-  date: string;
-  type: "income" | "expense";
-}
-
-const transactions: Transaction[] = [
-  {
-    id: 1,
-    description: "Grocery Shopping",
-    amount: -150.5,
-    category: "Food",
-    date: "2024-03-15",
-    type: "expense",
-  },
-  {
-    id: 2,
-    description: "Salary",
-    amount: 5000.0,
-    category: "Income",
-    date: "2024-03-14",
-    type: "income",
-  },
-  {
-    id: 3,
-    description: "Netflix Subscription",
-    amount: -15.99,
-    category: "Entertainment",
-    date: "2024-03-13",
-    type: "expense",
-  },
-  {
-    id: 4,
-    description: "Freelance Work",
-    amount: 800.0,
-    category: "Income",
-    date: "2024-03-12",
-    type: "income",
-  },
-  {
-    id: 5,
-    description: "Gas",
-    amount: -45.0,
-    category: "Transport",
-    date: "2024-03-11",
-    type: "expense",
-  },
-  {
-    id: 6,
-    description: "Restaurant",
-    amount: -85.5,
-    category: "Food",
-    date: "2024-03-10",
-    type: "expense",
-  },
-];
 
 export default function Transactions() {
   const [searchTerm, setSearchTerm] = useState("");

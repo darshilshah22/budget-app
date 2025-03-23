@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Plus,
   Search,
   Filter,
   DollarSign,
-  TrendingUp,
-  AlertCircle,
   ChevronRight,
   ArrowUpRight,
   ArrowDownRight,
@@ -14,96 +12,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { Card } from '../components/ui/card';
-
-interface Budget {
-  id: string;
-  category: string;
-  spent: number;
-  total: number;
-  trend: number;
-  trendDirection: 'up' | 'down';
-  color: string;
-}
-
-interface Insight {
-  id: string;
-  title: string;
-  description: string;
-  type: 'warning' | 'success' | 'info';
-  icon: React.ElementType;
-}
-
-const budgets: Budget[] = [
-  {
-    id: '1',
-    category: 'Food & Dining',
-    spent: 450,
-    total: 600,
-    trend: 12.5,
-    trendDirection: 'up',
-    color: 'blue',
-  },
-  {
-    id: '2',
-    category: 'Transportation',
-    spent: 280,
-    total: 400,
-    trend: 8.2,
-    trendDirection: 'down',
-    color: 'green',
-  },
-  {
-    id: '3',
-    category: 'Entertainment',
-    spent: 150,
-    total: 200,
-    trend: 5.7,
-    trendDirection: 'up',
-    color: 'purple',
-  },
-  {
-    id: '4',
-    category: 'Shopping',
-    spent: 320,
-    total: 500,
-    trend: 15.3,
-    trendDirection: 'up',
-    color: 'red',
-  },
-  {
-    id: '5',
-    category: 'Utilities',
-    spent: 180,
-    total: 250,
-    trend: 3.1,
-    trendDirection: 'down',
-    color: 'yellow',
-  },
-];
-
-const insights: Insight[] = [
-  {
-    id: '1',
-    title: 'High Spending Alert',
-    description: 'Your Food & Dining spending is 75% of the budget.',
-    type: 'warning',
-    icon: AlertCircle,
-  },
-  {
-    id: '2',
-    title: 'Savings Opportunity',
-    description: 'You could save $120 by reducing Entertainment expenses.',
-    type: 'success',
-    icon: TrendingUp,
-  },
-  {
-    id: '3',
-    title: 'Budget Optimization',
-    description: 'Consider reallocating unused Transportation budget.',
-    type: 'info',
-    icon: DollarSign,
-  },
-];
+import { budgets, insights } from '../data/sample-data';
 
 const colorMap = {
   blue: 'from-blue-500 to-blue-600',

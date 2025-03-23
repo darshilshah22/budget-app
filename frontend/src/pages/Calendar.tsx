@@ -13,73 +13,8 @@ import {
 import { Card } from "../components/ui/card";
 import { AddTransactionForm } from "../components/transactions/add-transaction-form";
 import { Modal } from "../components/ui/modal";
-
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  amount: number;
-  category: string;
-  type: "income" | "expense";
-}
-
-interface Transaction {
-  id: number;
-  description: string;
-  amount: number;
-  category: string;
-  date: string;
-  type: "income" | "expense";
-}
-
-const events: Event[] = [
-  {
-    id: "1",
-    title: "Grocery Shopping",
-    date: "2024-03-23",
-    time: "10:00 AM",
-    amount: 120.5,
-    category: "Food & Dining",
-    type: "expense",
-  },
-  {
-    id: "2",
-    title: "Salary Deposit",
-    date: "2024-03-25",
-    time: "9:00 AM",
-    amount: 3500.0,
-    category: "Income",
-    type: "income",
-  },
-  {
-    id: "3",
-    title: "Netflix Subscription",
-    date: "2024-03-28",
-    time: "12:00 AM",
-    amount: 15.99,
-    category: "Entertainment",
-    type: "expense",
-  },
-  {
-    id: "4",
-    title: "Gas Station",
-    date: "2024-03-30",
-    time: "2:30 PM",
-    amount: 45.0,
-    category: "Transportation",
-    type: "expense",
-  },
-  {
-    id: "5",
-    title: "Freelance Payment",
-    date: "2024-03-31",
-    time: "3:00 PM",
-    amount: 500.0,
-    category: "Income",
-    type: "income",
-  },
-];
+import { Event, events, Transaction } from "../data/sample-data";
+import { formatDate } from "../utils";
 
 const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const currentDate = new Date();
@@ -125,7 +60,7 @@ export default function Calendar() {
 
   const getEventsForDate = (date: Date) => {
     return events.filter(
-      (event) => event.date === date.toISOString().split("T")[0]
+      (event) => event.date === formatDate(date)
     );
   };
 
