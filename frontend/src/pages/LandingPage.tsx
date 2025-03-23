@@ -32,14 +32,14 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
             <button
               onClick={() => setIsAuthModalOpen(true)}
-              className="inline-flex items-center px-8 py-4 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 hover-button"
+              className="inline-flex items-center px-8 py-4 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 hover-button cursor-pointer"
             >
               Get Started
               <ArrowRight className="ml-2 h-5 w-5" />
             </button>
             <button
               onClick={handleDemoSignIn}
-              className="inline-flex items-center px-8 py-4 text-lg font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 hover-button border border-gray-700"
+              className="inline-flex items-center px-8 py-4 text-lg font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 hover-button border border-gray-700 cursor-pointer"
             >
               Try Demo
               <Play className="ml-2 h-5 w-5" />

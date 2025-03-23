@@ -122,12 +122,14 @@ export default function Budgets() {
   );
 
   return (
-    <div className="space-y-8 p-8 animate-fade-in">
+    <div className="space-y-8 py-4 animate-fade-in">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-10">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Budgets</h1>
-          <p className="text-gray-400 mt-3 text-lg">Track and manage your spending across categories.</p>
+          <h1 className="text-3xl font-bold text-white">Budgets</h1>
+          <p className="text-gray-400 mt-1">
+          Track and manage your spending across categories.
+          </p>
         </div>
         <div className="flex items-center space-x-4">
           <motion.button
@@ -158,19 +160,19 @@ export default function Budgets() {
       </div>
 
       {/* Filters Section */}
-      <Card className="p-6 hover-card shadow-lg">
+      <Card className="hover-card">
         <div className="flex items-center justify-between">
-          <div className="flex rounded-lg overflow-hidden shadow-inner">
+          <div className="flex rounded-lg overflow-hidden">
             {(['week', 'month', 'year'] as const).map((period) => (
               <motion.button
                 key={period}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                // whileHover={{ scale: 1.05 }}
+                // whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedPeriod(period)}
                 className={`px-8 py-3 text-sm font-medium transition-all duration-200 ${
                   selectedPeriod === period
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800 bg-gray-800'
                 }`}
               >
                 {period.charAt(0).toUpperCase() + period.slice(1)}
@@ -185,12 +187,12 @@ export default function Budgets() {
                 placeholder="Search budgets..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-inner w-72"
+                className="pl-12 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 w-72"
               />
             </div>
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              // whileHover={{ scale: 1.05 }}
+              // whileTap={{ scale: 0.95 }}
               className="inline-flex items-center px-6 py-3 text-sm font-medium text-gray-300 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               <Filter className="h-5 w-5 mr-2" />
@@ -201,111 +203,167 @@ export default function Budgets() {
       </Card>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Budget Overview */}
-        <div className="lg:col-span-2">
-          <Card className="p-10 hover-card shadow-lg">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="text-2xl font-semibold text-white">Budget Overview</h2>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200"
-              >
-                View All
-                <ChevronRight className="inline-block h-4 w-4 ml-1" />
-              </motion.button>
-            </div>
-            <div className="space-y-10">
-              {filteredBudgets.map((budget) => (
-                <motion.div
-                  key={budget.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-4"
+        <div className="lg:col-span-3">
+          <div className="relative p-8 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-sm overflow-hidden">
+            {/* Decorative Elements */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl" />
+            
+            {/* Content */}
+            <div className="relative">
+              <div className="flex items-center justify-between mb-10">
+                <div>
+                  <h2 className="text-2xl font-semibold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    Budget Overview
+                  </h2>
+                  <p className="text-gray-400 mt-1">Track your spending across categories</p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200 flex items-center gap-1"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-5">
-                      <div className={`p-3 rounded-full bg-gradient-to-r ${colorMap[budget.color as keyof typeof colorMap]} shadow-lg`}>
-                        <DollarSign className="h-6 w-6 text-white" />
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </motion.button>
+              </div>
+
+              <div className="space-y-8">
+                {filteredBudgets.map((budget) => (
+                  <motion.div
+                    key={budget.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="group relative p-6 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 hover:shadow-lg"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-800/0 via-gray-800/0 to-gray-800/0 group-hover:from-blue-500/5 group-hover:via-purple-500/5 group-hover:to-blue-500/5 rounded-xl transition-all duration-500" />
+                    
+                    <div className="relative space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-5">
+                          <div className={`p-3.5 rounded-xl bg-gradient-to-br ${colorMap[budget.color as keyof typeof colorMap]} shadow-lg group-hover:shadow-xl transition-shadow duration-300`}>
+                            <DollarSign className="h-6 w-6 text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-medium text-white group-hover:text-blue-300 transition-colors duration-300">
+                              {budget.category}
+                            </h3>
+                            <p className="text-base text-gray-400 mt-1 flex items-center gap-2">
+                              <span className="font-medium">${budget.spent.toFixed(2)}</span>
+                              <span className="text-gray-500">/</span>
+                              <span>${budget.total.toFixed(2)}</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className={`px-3 py-1 rounded-full ${
+                            budget.trendDirection === 'up' 
+                              ? 'bg-green-500/10 text-green-400' 
+                              : 'bg-red-500/10 text-red-400'
+                          } flex items-center gap-1 font-medium`}>
+                            {budget.trendDirection === 'up' ? (
+                              <ArrowUpRight className="h-4 w-4" />
+                            ) : (
+                              <ArrowDownRight className="h-4 w-4" />
+                            )}
+                            {budget.trend}%
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-xl font-medium text-white">{budget.category}</h3>
-                        <p className="text-base text-gray-400 mt-1">
-                          ${budget.spent.toFixed(2)} / ${budget.total.toFixed(2)}
-                        </p>
+
+                      {/* Progress Bar */}
+                      <div className="relative h-3 bg-gray-700/50 rounded-full overflow-hidden shadow-inner">
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-700/20 to-gray-700/0 z-10" />
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(budget.spent / budget.total) * 100}%` }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                          className={`h-full bg-gradient-to-r ${colorMap[budget.color as keyof typeof colorMap]} relative`}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10" />
+                        </motion.div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className={`text-base font-medium ${
-                        budget.trendDirection === 'up' ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        {budget.trendDirection === 'up' ? '+' : '-'}{budget.trend}%
-                      </span>
-                      {budget.trendDirection === 'up' ? (
-                        <ArrowUpRight className="h-5 w-5 text-green-400" />
-                      ) : (
-                        <ArrowDownRight className="h-5 w-5 text-red-400" />
-                      )}
-                    </div>
-                  </div>
-                  <div className="h-3 bg-gray-700 rounded-full overflow-hidden shadow-inner">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(budget.spent / budget.total) * 100}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className={`h-full bg-gradient-to-r ${colorMap[budget.color as keyof typeof colorMap]}`}
-                    />
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Budget Insights */}
-        <div>
-          <Card className="p-10 hover-card shadow-lg">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="text-2xl font-semibold text-white">Budget Insights</h2>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200"
-              >
-                View All
-                <ChevronRight className="inline-block h-4 w-4 ml-1" />
-              </motion.button>
-            </div>
-            <div className="space-y-6">
-              {insights.map((insight) => (
-                <motion.div
-                  key={insight.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex items-start space-x-5 p-6 rounded-lg bg-gray-800/50 shadow-inner"
+        <div className="lg:col-span-2">
+          <div className="relative p-8 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl border border-gray-700/50 shadow-xl backdrop-blur-sm overflow-hidden">
+            {/* Decorative Elements */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 pointer-events-none" />
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
+            
+            {/* Content */}
+            <div className="relative">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-xl font-semibold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    Budget Insights
+                  </h2>
+                  <p className="text-gray-400 mt-1 text-sm">Smart recommendations for your budget</p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200 flex items-center gap-1"
                 >
-                  <div className={`p-3 rounded-full ${
-                    insight.type === 'warning' ? 'bg-yellow-500/20' :
-                    insight.type === 'success' ? 'bg-green-500/20' :
-                    'bg-blue-500/20'
-                  } shadow-lg`}>
-                    <insight.icon className={`h-6 w-6 ${
-                      insight.type === 'warning' ? 'text-yellow-400' :
-                      insight.type === 'success' ? 'text-green-400' :
-                      'text-blue-400'
-                    }`} />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-medium text-white">{insight.title}</h3>
-                    <p className="text-base text-gray-400 mt-2">{insight.description}</p>
-                  </div>
-                </motion.div>
-              ))}
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </motion.button>
+              </div>
+
+              <div className="space-y-4">
+                {insights.map((insight) => (
+                  <motion.div
+                    key={insight.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="group relative p-6 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 hover:shadow-lg"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-800/0 via-gray-800/0 to-gray-800/0 group-hover:from-purple-500/5 group-hover:via-blue-500/5 group-hover:to-purple-500/5 rounded-xl transition-all duration-500" />
+                    
+                    <div className="relative flex items-start space-x-4">
+                      <div className={`p-3.5 rounded-xl ${
+                        insight.type === 'warning' 
+                          ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 text-yellow-400' 
+                          : insight.type === 'success'
+                          ? 'bg-gradient-to-br from-green-500/20 to-emerald-500/20 text-green-400'
+                          : 'bg-gradient-to-br from-blue-500/20 to-indigo-500/20 text-blue-400'
+                      } shadow-lg group-hover:shadow-xl transition-all duration-300`}>
+                        <insight.icon className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-medium text-white group-hover:text-blue-300 transition-colors duration-300 flex items-center gap-2">
+                          {insight.title}
+                          <div className={`px-2 py-0.5 text-xs rounded-full ${
+                            insight.type === 'warning'
+                              ? 'bg-yellow-500/10 text-yellow-400'
+                              : insight.type === 'success'
+                              ? 'bg-green-500/10 text-green-400'
+                              : 'bg-blue-500/10 text-blue-400'
+                          }`}>
+                            {insight.type.charAt(0).toUpperCase() + insight.type.slice(1)}
+                          </div>
+                        </h3>
+                        <p className="text-sm text-gray-400 mt-1 line-clamp-2">{insight.description}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>
