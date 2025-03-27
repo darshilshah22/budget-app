@@ -11,8 +11,8 @@ import { protect } from '../middleware/auth.middleware';
 
 const router = express.Router();
 
-// Validation middleware
-const transactionValidation = [
+// Validation middleware for create operation
+const createTransactionValidation = [
   body('type')
     .isIn(['income', 'expense'])
     .withMessage('Type must be either income or expense'),
@@ -22,8 +22,11 @@ const transactionValidation = [
     .isFloat({ min: 0.01 })
     .withMessage('Amount must be greater than 0'),
   body('category')
-    .isMongoId()
-    .withMessage('Invalid category ID'),
+    .notEmpty()
+    .withMessage('Category is required')
+    .isString()
+    .withMessage('Category must be a string')
+    .trim(),
   body('description')
     .notEmpty()
     .withMessage('Description is required')
@@ -32,22 +35,53 @@ const transactionValidation = [
     .optional()
     .isISO8601()
     .withMessage('Invalid date format'),
-  body('tags')
+  body('paymentType')
+    .isIn(['online', 'cash'])
+    .withMessage('Payment type must be either online or cash')
+];
+
+// Validation middleware for update operation
+const updateTransactionValidation = [
+  body('type')
     .optional()
-    .isArray()
-    .withMessage('Tags must be an array')
+    .isIn(['income', 'expense'])
+    .withMessage('Type must be either income or expense'),
+  body('amount')
+    .optional()
+    .isNumeric()
+    .withMessage('Amount must be a number')
+    .isFloat({ min: 0.01 })
+    .withMessage('Amount must be greater than 0'),
+  body('category')
+    .optional()
+    .isString()
+    .withMessage('Category must be a string')
+    .trim(),
+  body('description')
+    .optional()
+    .isString()
+    .withMessage('Description must be a string')
+    .trim(),
+  body('date')
+    .optional()
+    .isISO8601()
+    .withMessage('Invalid date format'),
+  body('paymentType')
+    .optional()
+    .isIn(['online', 'cash'])
+    .withMessage('Payment type must be either online or cash')
 ];
 
 // Routes
 router.use(protect); // Protect all transaction routes
 
 router.route('/')
-  .post(transactionValidation, createTransaction)
+  .post(createTransactionValidation, createTransaction)
   .get(getTransactions);
 
 router.route('/:id')
   .get(getTransactionById)
-  .put(transactionValidation, updateTransaction)
+  .put(updateTransactionValidation, updateTransaction)
   .delete(deleteTransaction);
 
 export default router; 

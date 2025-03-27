@@ -14,7 +14,7 @@ const router = express.Router();
 // Validation middleware
 const budgetValidation = [
   body('category')
-    .isMongoId()
+    .isString()
     .withMessage('Invalid category ID'),
   body('amount')
     .isNumeric()

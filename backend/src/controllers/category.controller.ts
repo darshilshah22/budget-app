@@ -17,7 +17,7 @@ export const createCategory = async (req: Request, res: Response) => {
     
     // Check if category already exists for this user
     const existingCategory = await Category.findOne({
-      userId: req.user._id,
+      userId: req.user?._id,
       name: name.toLowerCase()
     });
 
@@ -26,7 +26,7 @@ export const createCategory = async (req: Request, res: Response) => {
     }
 
     const category = new Category({
-      userId: req.user._id,
+      userId: req.user?._id,
       name: name.toLowerCase(),
       type,
       icon,
@@ -46,7 +46,7 @@ export const getCategories = async (req: Request, res: Response) => {
   try {
     const { type } = req.query;
     const query: any = { 
-      userId: req.user._id,
+      userId: req.user?._id,
       isActive: true
     };
 
@@ -67,7 +67,7 @@ export const getCategoryById = async (req: Request, res: Response) => {
   try {
     const category = await Category.findOne({
       _id: req.params.id,
-      userId: req.user._id,
+      userId: req.user?._id,
       isActive: true
     });
 
@@ -93,7 +93,7 @@ export const updateCategory = async (req: Request, res: Response) => {
     const { name, icon, color } = req.body;
     const category = await Category.findOne({
       _id: req.params.id,
-      userId: req.user._id,
+      userId: req.user?._id,
       isActive: true
     });
 
@@ -103,7 +103,7 @@ export const updateCategory = async (req: Request, res: Response) => {
 
     if (name) {
       const existingCategory = await Category.findOne({
-        userId: req.user._id,
+        userId: req.user?._id,
         name: name.toLowerCase(),
         _id: { $ne: req.params.id }
       });
@@ -130,7 +130,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
   try {
     const category = await Category.findOne({
       _id: req.params.id,
-      userId: req.user._id,
+      userId: req.user?._id,
       isDefault: false,
       isActive: true
     });
@@ -152,7 +152,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
 
 export const initializeUserCategories = async (req: Request, res: Response) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
     
     // Check if user already has categories
     const existingCategories = await Category.find({ userId });
@@ -161,7 +161,7 @@ export const initializeUserCategories = async (req: Request, res: Response) => {
     }
 
     // Initialize categories
-    await initializeCategories(userId.toString());
+    await initializeCategories(userId?.toString() || '');
     
     // Fetch the created categories
     const categories = await Category.find({ userId });

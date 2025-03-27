@@ -33,48 +33,83 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Budget = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const budgetSchema = new mongoose_1.Schema({
-    userId: {
+    user: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    category: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Category',
-        required: true
+    name: {
+        type: String,
+        required: true,
+        trim: true
     },
     amount: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
+    },
+    category: {
+        type: String,
+        required: true,
+        trim: true
     },
     period: {
         type: String,
-        enum: ['daily', 'weekly', 'monthly', 'yearly'],
-        required: true
+        required: true,
+        enum: ['daily', 'weekly', 'monthly', 'yearly', 'custom']
     },
     startDate: {
-        type: Date,
-        required: true
+        type: Date
     },
     endDate: {
-        type: Date,
-        required: true
+        type: Date
     },
-    spent: {
-        type: Number,
-        default: 0
+    type: {
+        type: String,
+        required: true,
+        enum: ['income', 'expense']
+    },
+    description: {
+        type: String,
+        trim: true
     },
     isActive: {
         type: Boolean,
         default: true
+    },
+    spent: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    remaining: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    notifications: {
+        enabled: {
+            type: Boolean,
+            default: false
+        },
+        threshold: {
+            type: Number,
+            min: 0,
+            max: 100
+        },
+        frequency: {
+            type: String,
+            enum: ['daily', 'weekly', 'monthly']
+        }
     }
 }, {
     timestamps: true
 });
-// Indexes for better query performance
-budgetSchema.index({ userId: 1, category: 1 });
-budgetSchema.index({ userId: 1, period: 1 });
-budgetSchema.index({ startDate: 1, endDate: 1 });
-exports.default = mongoose_1.default.model('Budget', budgetSchema);
+// Indexes
+budgetSchema.index({ user: 1, category: 1 });
+budgetSchema.index({ user: 1, period: 1 });
+budgetSchema.index({ user: 1, type: 1 });
+exports.Budget = mongoose_1.default.model('Budget', budgetSchema);

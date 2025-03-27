@@ -1,22 +1,9 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthModal } from '../components/AuthModal';
-import { ArrowRight, Play } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useState } from "react";
+import { AuthModal } from "../components/AuthModal";
+import { ArrowRight } from "lucide-react";
 
 export default function LandingPage() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const navigate = useNavigate();
-  const { signInDemo } = useAuth();
-
-  const handleDemoSignIn = async () => {
-    try {
-      await signInDemo();
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Demo sign in failed:', error);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -27,7 +14,8 @@ export default function LandingPage() {
             <span className="text-blue-500"> Finances</span>
           </h1>
           <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto animate-fade-in">
-            Track your expenses, set budgets, and achieve your financial goals with our intuitive budgeting app.
+            Track your expenses, set budgets, and achieve your financial goals
+            with our intuitive budgeting app.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
             <button
@@ -37,13 +25,6 @@ export default function LandingPage() {
               Get Started
               <ArrowRight className="ml-2 h-5 w-5" />
             </button>
-            <button
-              onClick={handleDemoSignIn}
-              className="inline-flex items-center px-8 py-4 text-lg font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 hover-button border border-gray-700 cursor-pointer"
-            >
-              Try Demo
-              <Play className="ml-2 h-5 w-5" />
-            </button>
           </div>
         </div>
 
@@ -51,19 +32,22 @@ export default function LandingPage() {
           <div className="p-6 bg-gray-800 rounded-xl hover-card animate-fade-in">
             <h3 className="text-xl font-semibold mb-4">Track Expenses</h3>
             <p className="text-gray-400">
-              Monitor your spending habits and identify areas where you can save money.
+              Monitor your spending habits and identify areas where you can save
+              money.
             </p>
           </div>
           <div className="p-6 bg-gray-800 rounded-xl hover-card animate-fade-in">
             <h3 className="text-xl font-semibold mb-4">Set Budgets</h3>
             <p className="text-gray-400">
-              Create and manage budgets for different categories to stay on track.
+              Create and manage budgets for different categories to stay on
+              track.
             </p>
           </div>
           <div className="p-6 bg-gray-800 rounded-xl hover-card animate-fade-in">
             <h3 className="text-xl font-semibold mb-4">Achieve Goals</h3>
             <p className="text-gray-400">
-              Set financial goals and track your progress towards achieving them.
+              Set financial goals and track your progress towards achieving
+              them.
             </p>
           </div>
         </div>
@@ -75,4 +59,4 @@ export default function LandingPage() {
       />
     </div>
   );
-} 
+}

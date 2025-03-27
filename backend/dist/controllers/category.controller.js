@@ -19,14 +19,14 @@ const createCategory = async (req, res) => {
         const { name, type, icon, color } = req.body;
         // Check if category already exists for this user
         const existingCategory = await category_model_1.default.findOne({
-            userId: req.user._id,
+            userId: req.user?._id,
             name: name.toLowerCase()
         });
         if (existingCategory) {
             return res.status(400).json((0, response_1.errorResponse)('Category already exists'));
         }
         const category = new category_model_1.default({
-            userId: req.user._id,
+            userId: req.user?._id,
             name: name.toLowerCase(),
             type,
             icon,
@@ -46,7 +46,7 @@ const getCategories = async (req, res) => {
     try {
         const { type } = req.query;
         const query = {
-            userId: req.user._id,
+            userId: req.user?._id,
             isActive: true
         };
         if (type) {
@@ -66,7 +66,7 @@ const getCategoryById = async (req, res) => {
     try {
         const category = await category_model_1.default.findOne({
             _id: req.params.id,
-            userId: req.user._id,
+            userId: req.user?._id,
             isActive: true
         });
         if (!category) {
@@ -90,7 +90,7 @@ const updateCategory = async (req, res) => {
         const { name, icon, color } = req.body;
         const category = await category_model_1.default.findOne({
             _id: req.params.id,
-            userId: req.user._id,
+            userId: req.user?._id,
             isActive: true
         });
         if (!category) {
@@ -98,7 +98,7 @@ const updateCategory = async (req, res) => {
         }
         if (name) {
             const existingCategory = await category_model_1.default.findOne({
-                userId: req.user._id,
+                userId: req.user?._id,
                 name: name.toLowerCase(),
                 _id: { $ne: req.params.id }
             });
@@ -125,7 +125,7 @@ const deleteCategory = async (req, res) => {
     try {
         const category = await category_model_1.default.findOne({
             _id: req.params.id,
-            userId: req.user._id,
+            userId: req.user?._id,
             isDefault: false,
             isActive: true
         });
@@ -145,14 +145,14 @@ const deleteCategory = async (req, res) => {
 exports.deleteCategory = deleteCategory;
 const initializeUserCategories = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user?._id;
         // Check if user already has categories
         const existingCategories = await category_model_1.default.find({ userId });
         if (existingCategories.length > 0) {
             return res.status(400).json((0, response_1.errorResponse)('Categories already initialized for this user'));
         }
         // Initialize categories
-        await (0, initializeData_1.initializeCategories)(userId.toString());
+        await (0, initializeData_1.initializeCategories)(userId?.toString() || '');
         // Fetch the created categories
         const categories = await category_model_1.default.find({ userId });
         logger_1.default.info(`Categories initialized for user: ${userId}`);

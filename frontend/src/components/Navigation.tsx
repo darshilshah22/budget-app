@@ -70,7 +70,7 @@ export default function Navigation() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-8">
             <div className="flex items-center text-gray-300">
               <User className="h-5 w-5 mr-2" />
-              <span className="text-sm font-medium">{user?.name}</span>
+              <span className="text-sm font-medium">{user?.firstName}</span>
             </div>
             <button
               onClick={handleSignOut}
@@ -105,7 +105,7 @@ export default function Navigation() {
         <div className="pt-2 pb-3 space-y-1 bg-gray-900">
           <div className="px-3 py-2 flex items-center text-gray-300 border-b border-gray-800">
             <User className="h-5 w-5 mr-3" />
-            <span className="text-base font-medium">{user?.name}</span>
+            <span className="text-base font-medium">{user?.firstName}</span>
           </div>
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;

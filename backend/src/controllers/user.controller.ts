@@ -1,86 +1,82 @@
-import { Request, Response } from 'express';
-import jwt, { SignOptions, Secret } from 'jsonwebtoken';
-import User, { IUser } from '../models/user.model';
-import { validationResult } from 'express-validator';
-import logger from '../utils/logger';
-import { successResponse, errorResponse } from '../utils/response';
+import { Request, Response } from "express";
+import { validationResult } from "express-validator";
+import User, { IUser } from "../models/user.model";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
+import { generateToken } from "../utils/jwt";
+import logger from "../utils/logger";
 
-const generateToken = (userId: string): string => {
-  const secret = (process.env.JWT_SECRET || 'your_jwt_secret_key') as Secret;
-  const options: SignOptions = {
-    expiresIn: 7 * 24 * 60 * 60 // 7 days in seconds
-  };
-  return jwt.sign({ userId }, secret, options);
-};
-
+// Register user
 export const register = async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json(errorResponse('Validation error', errors.array()));
+      return res
+        .status(400)
+        .json(new ApiError(400, "Validation error", errors.array()));
     }
 
-    const { email, password, firstName, lastName } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
-    // Check if user exists
-    let user: IUser | null = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json(errorResponse('User already exists, Use different email'));
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json(new ApiError(400, "User already exists"));
     }
 
-    // Create user
-    user = new User({
+    // Create new user
+    const user = await User.create({
+      firstName,
+      lastName,
       email,
       password,
-      firstName,
-      lastName
     });
-
-    await user.save();
-
-    if (!user._id) {
-      throw new Error('User ID not generated');
-    }
 
     // Generate token
     const token = generateToken(user._id.toString());
 
     logger.info(`New user registered: ${user.email}`);
 
-    res.status(201).json(successResponse('User registered successfully', {
-      token,
-      user: {
+    res.status(201).json(
+      new ApiResponse(201, "User registered successfully", {
         id: user._id,
-        email: user.email,
         firstName: user.firstName,
-        lastName: user.lastName
-      }
-    }));
+        lastName: user.lastName,
+        email: user.email,
+        token,
+      })
+    );
   } catch (error) {
-    logger.error('Error in user registration:', error);
-    res.status(500).json(errorResponse('Server error', error));
+    if (error instanceof Error) {
+      res.status(400).json(new ApiError(400, error.message));
+    } else {
+      res.status(500).json(new ApiError(500, "Internal server error"));
+    }
   }
 };
 
+// Login user
 export const login = async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json(errorResponse('Validation error', errors.array()));
+      return res
+        .status(400)
+        .json(new ApiError(400, "Validation error", errors.array()));
     }
 
     const { email, password } = req.body;
 
-    // Check if user exists
-    const user: IUser | null = await User.findOne({ email });
-    if (!user || !user._id) {
-      return res.status(400).json(errorResponse('Invalid credentials'));
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json(new ApiError(401, "Invalid credentials"));
     }
 
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json(errorResponse('Invalid credentials'));
+      return res.status(401).json(new ApiError(401, "Invalid credentials"));
     }
 
     // Generate token
@@ -88,53 +84,128 @@ export const login = async (req: Request, res: Response) => {
 
     logger.info(`User logged in: ${user.email}`);
 
-    res.json(successResponse('Login successful', {
-      token,
-      user: {
+    res.status(200).json(
+      new ApiResponse(200, "Login successful", {
         id: user._id,
-        email: user.email,
         firstName: user.firstName,
-        lastName: user.lastName
-      }
-    }));
+        lastName: user.lastName,
+        email: user.email,
+        token,
+      })
+    );
   } catch (error) {
-    logger.error('Error in user login:', error);
-    res.status(500).json(errorResponse('Server error', error));
+    if (error instanceof Error) {
+      res.status(400).json(new ApiError(400, error.message));
+    } else {
+      res.status(500).json(new ApiError(500, "Internal server error"));
+    }
   }
 };
 
+// Get user profile
 export const getProfile = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
-    if (!user) {
-      return res.status(404).json(errorResponse('User not found'));
+    if (!req.user) {
+      return res.status(401).json(new ApiError(401, "Not authenticated"));
     }
-    res.json(successResponse('Profile retrieved successfully', user));
+
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) {
+      return res.status(404).json(new ApiError(404, "User not found"));
+    }
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Profile retrieved successfully", user));
   } catch (error) {
-    logger.error('Error getting user profile:', error);
-    res.status(500).json(errorResponse('Server error', error));
+    if (error instanceof Error) {
+      res.status(400).json(new ApiError(400, error.message));
+    } else {
+      res.status(500).json(new ApiError(500, "Internal server error"));
+    }
   }
 };
 
+// Update user profile
 export const updateProfile = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, currency, timezone } = req.body;
-    const user = await User.findById(req.user._id);
-
-    if (!user) {
-      return res.status(404).json(errorResponse('User not found'));
+    if (!req.user) {
+      return res.status(401).json(new ApiError(401, "Not authenticated"));
     }
 
-    if (firstName) user.firstName = firstName;
-    if (lastName) user.lastName = lastName;
-    if (currency) user.currency = currency;
-    if (timezone) user.timezone = timezone;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json(new ApiError(400, "Validation error", errors.array()));
+    }
 
-    await user.save();
+    const { firstName, lastName, email, currency, timezone } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { firstName, lastName, email, currency, timezone },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json(new ApiError(404, "User not found"));
+    }
+
     logger.info(`User profile updated: ${user.email}`);
-    res.json(successResponse('Profile updated successfully', user));
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Profile updated successfully", user));
   } catch (error) {
-    logger.error('Error updating user profile:', error);
-    res.status(500).json(errorResponse('Server error', error));
+    if (error instanceof Error) {
+      res.status(400).json(new ApiError(400, error.message));
+    } else {
+      res.status(500).json(new ApiError(500, "Internal server error"));
+    }
   }
-}; 
+};
+
+// Update password
+export const updatePassword = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json(new ApiError(401, "Not authenticated"));
+    }
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json(new ApiError(400, "Validation error", errors.array()));
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json(new ApiError(404, "User not found"));
+    }
+
+    // Check current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json(new ApiError(401, "Current password is incorrect"));
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Password updated successfully", null));
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json(new ApiError(400, error.message));
+    } else {
+      res.status(500).json(new ApiError(500, "Internal server error"));
+    }
+  }
+};

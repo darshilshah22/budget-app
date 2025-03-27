@@ -50,8 +50,7 @@ const transactionSchema = new mongoose_1.Schema({
         required: true
     },
     category: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Category',
+        type: String,
         required: true
     },
     description: {
@@ -63,9 +62,11 @@ const transactionSchema = new mongoose_1.Schema({
         required: true,
         default: Date.now
     },
-    tags: [{
-            type: String
-        }],
+    paymentType: {
+        type: String,
+        enum: ['online', 'cash'],
+        required: true
+    },
     isActive: {
         type: Boolean,
         default: true
@@ -77,4 +78,5 @@ const transactionSchema = new mongoose_1.Schema({
 transactionSchema.index({ userId: 1, date: -1 });
 transactionSchema.index({ userId: 1, category: 1 });
 transactionSchema.index({ userId: 1, type: 1 });
+transactionSchema.index({ userId: 1, paymentType: 1 });
 exports.default = mongoose_1.default.model('Transaction', transactionSchema);

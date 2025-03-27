@@ -1,61 +1,104 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IBudget extends Document {
-  userId: mongoose.Types.ObjectId;
-  category: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
+  name: string;
   amount: number;
-  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
-  startDate: Date;
-  endDate: Date;
-  spent: number;
+  category: string;
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
+  startDate?: Date;
+  endDate?: Date;
+  type: 'income' | 'expense';
+  description?: string;
   isActive: boolean;
+  spent: number;
+  remaining: number;
+  notifications?: {
+    enabled: boolean;
+    threshold: number;
+    frequency: 'daily' | 'weekly' | 'monthly';
+  };
   createdAt: Date;
   updatedAt: Date;
 }
 
-const budgetSchema = new Schema({
-  userId: {
+const budgetSchema = new Schema<IBudget>({
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  category: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true
+  name: {
+    type: String,
+    required: true,
+    trim: true
   },
   amount: {
     type: Number,
-    required: true
+    required: true,
+    min: 0
+  },
+  category: {
+    type: String,
+    required: true,
+    trim: true
   },
   period: {
     type: String,
-    enum: ['daily', 'weekly', 'monthly', 'yearly'],
-    required: true
+    required: true,
+    enum: ['daily', 'weekly', 'monthly', 'yearly', 'custom']
   },
   startDate: {
-    type: Date,
-    required: true
+    type: Date
   },
   endDate: {
-    type: Date,
-    required: true
+    type: Date
   },
-  spent: {
-    type: Number,
-    default: 0
+  type: {
+    type: String,
+    required: true,
+    enum: ['income', 'expense']
+  },
+  description: {
+    type: String,
+    trim: true
   },
   isActive: {
     type: Boolean,
     default: true
+  },
+  spent: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  remaining: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  notifications: {
+    enabled: {
+      type: Boolean,
+      default: false
+    },
+    threshold: {
+      type: Number,
+      min: 0,
+      max: 100
+    },
+    frequency: {
+      type: String,
+      enum: ['daily', 'weekly', 'monthly']
+    }
   }
 }, {
   timestamps: true
 });
 
-// Indexes for better query performance
-budgetSchema.index({ userId: 1, category: 1 });
-budgetSchema.index({ userId: 1, period: 1 });
-budgetSchema.index({ startDate: 1, endDate: 1 });
+// Indexes
+budgetSchema.index({ user: 1, category: 1 });
+budgetSchema.index({ user: 1, period: 1 });
+budgetSchema.index({ user: 1, type: 1 });
 
-export default mongoose.model<IBudget>('Budget', budgetSchema); 
+export const Budget = mongoose.model<IBudget>('Budget', budgetSchema); 

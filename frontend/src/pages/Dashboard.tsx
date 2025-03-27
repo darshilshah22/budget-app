@@ -72,7 +72,7 @@ export default function Dashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">
-            Welcome back, {user?.name}
+            Welcome back, {user?.firstName}
           </h1>
           <p className="text-gray-400">
             Here's what's happening with your finances today.

@@ -4,10 +4,10 @@ export interface ITransaction extends Document {
   userId: mongoose.Types.ObjectId;
   type: 'income' | 'expense';
   amount: number;
-  category: mongoose.Types.ObjectId;
+  category: string;
   description: string;
   date: Date;
-  tags?: string[];
+  paymentType: 'online' | 'cash';
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -29,8 +29,7 @@ const transactionSchema = new Schema({
     required: true
   },
   category: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category',
+    type: String,
     required: true
   },
   description: {
@@ -42,9 +41,11 @@ const transactionSchema = new Schema({
     required: true,
     default: Date.now
   },
-  tags: [{
-    type: String
-  }],
+  paymentType: {
+    type: String,
+    enum: ['online', 'cash'],
+    required: true
+  },
   isActive: {
     type: Boolean,
     default: true
@@ -57,5 +58,6 @@ const transactionSchema = new Schema({
 transactionSchema.index({ userId: 1, date: -1 });
 transactionSchema.index({ userId: 1, category: 1 });
 transactionSchema.index({ userId: 1, type: 1 });
+transactionSchema.index({ userId: 1, paymentType: 1 });
 
 export default mongoose.model<ITransaction>('Transaction', transactionSchema); 
